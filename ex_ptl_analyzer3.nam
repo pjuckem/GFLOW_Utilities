@@ -1,0 +1,11 @@
+Shapefiles = no			# Whether or not shapefiles are desired. ASCII output files are always produced. Shapefiles will use the names provided for the ASCII outfiles.
+RanVarFileName = ldf18b.ranvar		# Name of the file containing all the parameter realizations
+PSTfilename = LF18diff.pst		# Base PST control file
+method = 4				# Method: 1 for end point analysis for ZOC to wells; 2 for terminal element analysis for a plume; 3 for plume pathline distribution; 4 for both 2 & 3
+datfilename = LF18diff.dat		# Name of GFLOW dat file
+PTHfilename = LF18diff.PTH	# Name of GFLOW pathline file
+elefilename = ex_LineSinkFile.dat	# For methods 2 and 4. Name of the input file with linesink and well elements (and their coordinates) to evaluate if they are terminal elements.
+eleoutfilename = LF18diff_fine_ele.out  # For methods 2 and 4 only. Name of the output file that will contain the coordinates for the terminal linesink elements (line file).
+welloutfilename = NONE			# For methods 2 and 4 only. Name of the output file (if any) that will contain the coordinates for the terminal well elements (point file).
+gridfilename = ex_evaluation_grid.dat # For methods 3 and 4 only. Name of the file containing grid nodes for evaluating the spatial extent of pathlines.
+gridoutfilename = LF18diff_grdnode_ptlstep.out # For methods 3 and 4 only. Name of the output file that will contain the coordinates and a flag (0 or 1) indicating whether a pathline traveled through each grid cell.
