@@ -242,6 +242,16 @@ try:
 except:
     raise(FileFail(outfilename,'output file'))
 
+# #########################      
+# Evaluate and write grid #
+# #########################
+Z = 0
+pshape = shapefile.Writer(shapefile.POINT)        #set up the point shapefile
+pshape.field('ptl')
+#pshape.field('StartElev','N',7,2) # StartElev is a number with upto 7 spaces, 2 of which are decimals
+pt_outstring = '     X      ' + '       Y    ' + '    ID_Num  ' + '\n' 
+output_file.write(pt_outstring)    # write header to the output files 
+
 # #############################
 # Rectangle grid of particles #
 # #############################  
@@ -254,48 +264,39 @@ except:
 
 sfshape = sf.shapes()
 box = []
-box = sfshape[0].bbox
-Xmin = box[0]
-Ymin = box[1]
-Xmax = box[2]
-Ymax = box[3]
-ptlpoly = []
-ptlpoly = sfshape[0].points[:]
-Pg = []
-PCOORDgrd = []
-Ypoly = Ymin
-Xpoly = Xmin
-# Generate rectangular grid, starting at lower left moving to upper right
-while (Ypoly <= Ymax):
+for eachpoly,polygon in enumerate(sfshape):  # allows for multiple polygons within one shapefile
+    box = sfshape[eachpoly].bbox
+    Xmin = box[0]
+    Ymin = box[1]
+    Xmax = box[2]
+    Ymax = box[3]
+    ptlpoly = []
+    ptlpoly = sfshape[eachpoly].points[:]
+    Pg = []
+    PCOORDgrd = []
+    Ypoly = Ymin
     Xpoly = Xmin
-    Pg.append(Xpoly)
-    Pg.append(Ypoly)
-    PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
-    Pg = [] 
-    while (Xpoly <= Xmax):
-        Xpoly = Xpoly + dist
+    # Generate rectangular grid, starting at lower left moving to upper right
+    while (Ypoly <= Ymax):
+        Xpoly = Xmin
         Pg.append(Xpoly)
         Pg.append(Ypoly)
         PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
-        Pg = []  
-    Ypoly = Ypoly + dist	
+        Pg = [] 
+        while (Xpoly <= Xmax):
+            Xpoly = Xpoly + dist
+            Pg.append(Xpoly)
+            Pg.append(Ypoly)
+            PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
+            Pg = []  
+        Ypoly = Ypoly + dist	
 
-# #########################      
-# Evaluate and write grid #
-# #########################
-
-Z = 0
-pshape = shapefile.Writer(shapefile.POINT)        #set up the point shapefile
-pshape.field('ptl')
-#pshape.field('StartElev','N',7,2) # StartElev is a number with upto 7 spaces, 2 of which are decimals
-pt_outstring = '     X      ' + '       Y    ' + '    ID_Num  ' + '\n' 
-output_file.write(pt_outstring)    # write header to the output files 
-
-for test_pt in (PCOORDgrd[:]): 	
-    inout = point_in_poly(test_pt,ptlpoly) # function call to test in/out of polygon
-    if inout:  
-        Z += 1		
-        write_grid(test_pt,Z,yes_no) # function call to write the coordinates to flat file and shapefile
+    # check generated grid of points against true extent of the polygons
+    for test_pt in (PCOORDgrd[:]): 	
+        inout = point_in_poly(test_pt,ptlpoly) # function call to test in/out of polygon
+        if inout:  
+            Z += 1		
+            write_grid(test_pt,Z,yes_no) # function call to write the coordinates to flat file and shapefile
 
 # close output file    
 try:	output_file.close()
