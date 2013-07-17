@@ -157,7 +157,7 @@ def get_step(datfilename): # reads *.dat file and returns X and Y of model orgin
 
 # process input
 keywords = ['write_shapefiles','datfilename', 'shapefile_name',
-            'outfilename', 'computational_units', 'step_multiplier',
+            'outfilename', 'distance_units', 'step_multiplier',
             'step_size']
 shapekeys = ['yes','no']
 unitkeys = ['ft','feet','m','meter','meters']
@@ -192,7 +192,7 @@ for key in allin.keys(): # test that all key words in NAM file match the predete
 
 # pass values to the variables from what was read-in using keywords
 yes_no = allin['write_shapefiles'].lower() 
-units = allin['computational_units'].lower()
+units = allin['distance_units'].lower()
 outfilename = allin['outfilename']
 datfilename = allin['datfilename']
 shapefilename = allin['shapefile_name']

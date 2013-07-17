@@ -1,9 +1,9 @@
 Write_Shapefiles = yes			# Whether or not shapefiles are desired. ASCII output files are always produced. Shapefiles will use the names provided for the ASCII outfiles.
-datfilename = waupaca4.dat		# Name of GFLOW dat file
-Shapefile_name = D:\PFJData2\Projects\NAQWA\Cycle3\Waupaca\ARC\Guldan_area.shp 		# name of the shapefile for the desired particle grid. NOTE: Datum should be NAD27 and UTM coordinates.
-outfilename = test_points.dat  		# output analysis grid filename.  Note: output is a grid of X,Y in meters.
-Computational_Units = ft		# enter "ft" or "m" if model properties (K = ft/d) are in feet or meters.
-Step_size = 5280			# Distance between points, in computational units (m or ft)
+datfilename = Menom8_Calib.dat		# Name of GFLOW dat file
+Shapefile_name = M:\GroundWater_Systems\Menominee\ARC\Zoar_PTLgrid.shp 		# name of the shapefile for the desired particle grid. NOTE: Datum should be NAD27 and UTM coordinates.
+outfilename = Zoar_PTLs.dat  		# output analysis grid filename.  Note: output is a grid of X,Y in meters.
+Distance_units = ft			# enter "ft" or "m" for step size below, or for GFLOW coordinates if specify "Step_Multiplier" below.
+Step_size = 1320			# Distance between points, in computational units (m or ft)
 # Instead of "Step_size", you could alternatively indicate the number of multiples "Step_multiplier" of the particle solution step size. Note that step size is typically in model coordinates (UTM and meters)
 
 # Acceptable key words are: 		Acceptable responses are:
@@ -12,7 +12,7 @@ Step_size = 5280			# Distance between points, in computational units (m or ft)
 # datfilename				name of the GFLOW dat file
 # Shapefile_name			name of the polygon shapefile (UTM NAD27) overwhich particles will be generated
 # outfilename				name of the outputfile.  Shapefiles, if written, will use the same name.
-# computational_units			ft, feet, m, meter, meters...depending on propery units of the model
+# Distance_units			ft, feet, m, meter, meters...depending on specified step_size or coordinate units of the model.
 # Step_multiplier			any non-negative number [omit if "step_size" is specified]. NOTE: the program rounds down to the nearest integer meter to avoid numerical precission errors later on.
 # Step_size				any non-negative number [omit if "step_multiplier" is specified]
 # if specify "step_size" directly, be sure units are in computation units
