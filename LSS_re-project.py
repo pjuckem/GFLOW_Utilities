@@ -25,7 +25,7 @@ yCount = 0
 
 p1 = Proj(init='epsg:26716') #UTM27 zone 16
 p2 = Proj(init='epsg:3071') #WTM Harn
-p3 = Proj(init='epsg:4326') #WGS84 (lat/long)
+p3 = Proj(init='epsg:4326') #WGS84 (lat/long) -- may want to change this to 4269 (NAD83 northamerica) or 4152 (NAD83HARN)
 
 for line in open(filename):
     # strip out whitespace to left and right of string, split by the space between
