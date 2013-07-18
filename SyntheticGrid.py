@@ -310,7 +310,15 @@ if yes_no == 'yes':
     prjinfile = prefix + '.prj'
     prefix,suffix = outfilename.split('.')
     prjoutfile = prefix + '.prj'
-    shutil.copyfile(prjinfile,prjoutfile)
+    try:
+        with open(prjinfile): pass
+        shutil.copyfile(prjinfile,prjoutfile)
+    except:
+        print ('\n \n********************************************************** \n'
+                    '* All files other than the *.prj file have been written. * \n'
+                    '**********************************************************\n \n')
+        raise(FileFail(prjinfile,'shapefile projection (*.prj) file'))
+    
     
 #get the elapsed time in seconds
 t_end = time.time()-t_start
