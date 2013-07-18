@@ -1,0 +1,3 @@
+Menom8_fluxgain.out  	# grad_target output file
+menom8.XTR        	# XTR Filename
+menom8_gage_gains.in  	# input file with a list of USGS station IDs and GFLOW IDs for targets used to compute gains
