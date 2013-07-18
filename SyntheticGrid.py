@@ -15,6 +15,7 @@
 import sys
 import numpy as np
 import time
+import shutil
 try:
     import shapefile
     shapefiles_imported = True
@@ -74,11 +75,10 @@ class UnitFail(Exception):
     def __init__(self,key):
         self.key = key
     def __str__(self):
-        return('\n\nThe specified computational units do not match one of the 2 pre-determined units. \n' +
+        return('\n\nThe specified distance units do not match one of the 2 pre-determined units. \n' +
                'The offending input  was:\n' +
                '"' + self.key + '"' +'\n' +
-               'Please specify feet or meters to indicate the input units specified for the model. \n'
-               'For example, "feet" if hydraulic conductivity is in ft/d.')
+               'Please specify feet or meters.')
 
 # -- Failure with reading the particle step from the GFLOW DAT file
 class StepFail(Exception):
@@ -305,7 +305,13 @@ except:	raise(FileFail(outfilename,'output file'))
 # save the shapefile
 if yes_no == 'yes':
     pshape.save(outfilename)
-
+    # copy the projection file from the input Shapefile to the output shapefile
+    prefix,suffix = shapefilename.split('.')
+    prjinfile = prefix + '.prj'
+    prefix,suffix = outfilename.split('.')
+    prjoutfile = prefix + '.prj'
+    shutil.copyfile(prjinfile,prjoutfile)
+    
 #get the elapsed time in seconds
 t_end = time.time()-t_start
 

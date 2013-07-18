@@ -13,15 +13,16 @@
 import sys
 import numpy as np
 import time
+import shutil
 try:
     import shapefile
     shapefiles_imported = True
 except: 
     shapefiles_imported = False
     print ('\n'
-        'WARNING: Unable to import the "shapefile" module. \n\n'
-        'The program will not work without the ability to read \n'
-        'the polygon shapefile that is to be filled with particles. \n\n')
+           'WARNING: Unable to import the "shapefile" module. \n\n'
+           'The program will not work without the ability to read \n'
+           'the polygon shapefile that is to be filled with particles. \n\n')
 
 echo = False
 dat_echo = False
@@ -32,21 +33,21 @@ t_start = time.time()
 # -- cannot read/write/open/close file
 class FileFail(Exception):
     def __init__(self,filename,filetype):
-	self.filename=filename
-	self.ft = filetype
+        self.filename=filename
+        self.ft = filetype
     def __str__(self):
-	return('\n\nProblem with ' + self.ft +': ' + self.filename + ' \n' +
-	    "Either it can't be opened or closed, can't be read from or written to, or doesn't exist") 
+        return('\n\nProblem with ' + self.ft +': ' + self.filename + ' \n' +
+               "Either it can't be opened or closed, can't be read from or written to, or doesn't exist") 
 
 # -- Failure parsing the input data file
 class ParseFail(Exception):
     def __init__(self,offending_line):
-	self.offending_line = offending_line
+        self.offending_line = offending_line
     def __str__(self):
-	return('\n\nThere was a problem parsing a line in your data file. \n' +
+        return('\n\nThere was a problem parsing a line in your data file. \n' +
                'The offending line was:\n' +
                '"' + self.offending_line + '"')
-    
+
 # -- Failure with keywords in the name file
 class KeyFail(Exception):
     def __init__(self,key):
@@ -104,15 +105,15 @@ def point_in_poly(test_pt,poly):
 
     p1x,p1y = poly[0]
     for i in range(n+1):
-	p2x,p2y = poly[i % n]
-	if y > min(p1y,p2y):
-	    if y <= max(p1y,p2y):
-		if x <= max(p1x,p2x):
-		    if p1y != p2y:
-			xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
-		    if p1x == p2x or x <= xints:
-			inside = not inside
-	p1x,p1y = p2x,p2y
+        p2x,p2y = poly[i % n]
+        if y > min(p1y,p2y):
+            if y <= max(p1y,p2y):
+                if x <= max(p1x,p2x):
+                    if p1y != p2y:
+                        xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xints:
+                        inside = not inside
+        p1x,p1y = p2x,p2y
     return inside
 
 # ######################### #
@@ -126,24 +127,24 @@ def write_grid(test_pt,SE,Z):
     output_file.write(pt_outstring)    # write to the output files       
     pshape.point(X,Y)    # write to the shapefile with model coordinates
     pshape.record(Z,SE)
-	
+
 # ###########################
 # GFLOW dat file info block #
 # ###########################
 def get_model_origin(datfilename): # reads *.dat file and returns X and Y of model orgin	
     DATA = []
     try:
-	dat_file = open(datfilename,'r').readlines()
+        dat_file = open(datfilename,'r').readlines()
     except:
-	raise(FileFail(datfilename,'dat file'))
-    
+        raise(FileFail(datfilename,'dat file'))
+
     for each_line in dat_file:
-	DATA = each_line.split()  # splits a string at whitespaces    
-	DATA = DATA[:] + [1]
-	if DATA[0] == 'modelorigin': # Origin coordinates are in meters, all else in feet
-	    X_ORIG = float(DATA[1])
-	    Y_ORIG = float(DATA[2])
-	    break
+        DATA = each_line.split()  # splits a string at whitespaces    
+        DATA = DATA[:] + [1]
+        if DATA[0] == 'modelorigin': # Origin coordinates are in meters, all else in feet
+            X_ORIG = float(DATA[1])
+            Y_ORIG = float(DATA[2])
+            break
     return (X_ORIG,Y_ORIG)	
 
 # ############################################################## #			
@@ -171,20 +172,20 @@ vals = []
 for eachline in lines:
     lineinfo = eachline.split('#')[0].split('=') # splits by = on the left tuple
     if len(lineinfo) > 1: # allows comments to be placed anywhere in the file following a #
-	varnames.append(lineinfo[0].strip().lower()) # assign variable name after strip whitespace and ensure lower case
-	vals.append(lineinfo[1].strip()) # assign variable
+        varnames.append(lineinfo[0].strip().lower()) # assign variable name after strip whitespace and ensure lower case
+        vals.append(lineinfo[1].strip()) # assign variable
 allin = dict(zip(varnames,vals)) # construct dictionary of keywords and variables from NAM file.
 
 # test that all key words in NAM file match the predetermined list of key words
 match = False
 for key in allin.keys(): 
     for keyword in keywords:
-	if key == keyword:
-	    match = True
-	    break
-	else: match = False
+        if key == keyword:
+            match = True
+            break
+        else: match = False
     if match == False:
-	raise(KeyFail(key))    
+        raise(KeyFail(key))    
 
 # pass values to the variables from what was read-in using keywords
 yes_no = allin['write_shapefiles'].lower() 
@@ -194,7 +195,7 @@ datfilename = allin['datfilename']
 shapefilename = allin['shapefile_name']    
 elevunits = allin['elevation_units'].lower()
 direction = allin['direction'].lower()
-    
+
 match = False
 for key in shapekeys: # test that input text for writing shapefiles matches one of the key words
     if key == yes_no:
@@ -247,7 +248,7 @@ elif direction.lower() == 'backward':
 dist = float(allin['particle_spacing']) # read distance between particles
 if (distunits == 'ft' or distunits == 'feet'):
     dist = dist * 0.3048 # convert to metric so all coordinates are metric.
-    
+
 # get starting elevation of particles
 SE = float(allin['elevation'])
 # Note: Will not do anything with the specified elevation units, because expect
@@ -303,25 +304,25 @@ for eachpoly,polygon in enumerate(sfshape):  # allows for multiple polygons with
     Xpoly = Xmin
     # Generate rectangular grid, starting at lower left moving to upper right
     while (Ypoly <= Ymax):
-	Xpoly = Xmin
-	Pg.append(Xpoly)
-	Pg.append(Ypoly)
-	PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
-	Pg = [] 
-	while (Xpoly <= Xmax):
-	    Xpoly = Xpoly + dist
-	    Pg.append(Xpoly)
-	    Pg.append(Ypoly)
-	    PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
-	    Pg = []  
-	Ypoly = Ypoly + dist	
+        Xpoly = Xmin
+        Pg.append(Xpoly)
+        Pg.append(Ypoly)
+        PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
+        Pg = [] 
+        while (Xpoly <= Xmax):
+            Xpoly = Xpoly + dist
+            Pg.append(Xpoly)
+            Pg.append(Ypoly)
+            PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
+            Pg = []  
+        Ypoly = Ypoly + dist	
 
 # check generated grid of points against true extent of the polygons
     for test_pt in (PCOORDgrd[:]): 	
-	inout = point_in_poly(test_pt,ptlpoly) # function call to test in/out of polygon
-	if inout:			
-	    Z += 1
-	    write_grid(test_pt,SE,Z)
+        inout = point_in_poly(test_pt,ptlpoly) # function call to test in/out of polygon
+        if inout:			
+            Z += 1
+            write_grid(test_pt,SE,Z)
 
 # close output file    
 try:
@@ -330,7 +331,14 @@ except:
     raise(FileFail(outfilename,'output file'))
 
 # save the shapefile
-pshape.save(outfilename)
+if yes_no == 'yes':
+    pshape.save(outfilename)
+    # copy the projection file from the input Shapefile to the output shapefile
+    prefix,suffix = shapefilename.split('.')
+    prjinfile = prefix + '.prj'
+    prefix,suffix = outfilename.split('.')
+    prjoutfile = prefix + '.prj'
+    shutil.copyfile(prjinfile,prjoutfile)
 
 #get the elapsed time in seconds
 t_end = time.time()-t_start
