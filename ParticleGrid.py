@@ -262,9 +262,9 @@ try:
 except:
     raise(FileFail(outfilename,'output file'))
 
-# ###################################################      
-# perform evaluation based on NstrtElev and polygon #
-# ###################################################
+# #####################################      
+# perform evaluation based on polygon #
+# #####################################
 
 Z = 0
 pshape = shapefile.Writer(shapefile.POINT)        #set up the point shapefile
@@ -272,15 +272,25 @@ pshape.field('ptl')
 pshape.field('StartElev','N',7,2)
 pt_outstring = '  X   ' + '   Y   ' + '    StartElev    ' + ' for/back \n' 
 output_file.write(pt_outstring)    # write header to the output files 
-
-# #############################
-# Rectangle grid of particles #
-# #############################
 '''
-Xmin = 9999999999999
-Ymin = 9999999999999
-Xmax = 0
-Ymax = 0
+output_file.write(' well discharge \n')
+output_file.write(' well head \n')
+output_file.write(' ppwell discharge \n')
+output_file.write(' ppwell head \n')
+output_file.write(' Theis well \n')
+output_file.write(' linesink discharge \n')
+output_file.write(' linesink head \n')
+output_file.write(' inhomogeneity \n')
+output_file.write(' quit \n')
+output_file.write(' y \n')
+output_file.write(' quit \n')
+output_file.write(' trace \n')
+output_file.write(' picture off \n')
+output_file.write(' file menom8 \n')
+output_file.write(' y  \n')
+output_file.write(' time 3652500 \n')
+output_file.write(' step 15.0 \n')
+output_file.write(' points \n')
 '''
 # open the shapefile for the grid
 try:
@@ -288,6 +298,7 @@ try:
 except:
     raise(FileFail(shapefilename,'shapefile'))
 
+# analyze shapefile and write particles
 sfshape = sf.shapes()
 box = []
 for eachpoly,polygon in enumerate(sfshape):  # allows for multiple polygons within one shapefile
@@ -323,7 +334,12 @@ for eachpoly,polygon in enumerate(sfshape):  # allows for multiple polygons with
         if inout:			
             Z += 1
             write_grid(test_pt,SE,Z)
-
+'''
+output_file.write(' quit \n')    # write end to the tpl file
+output_file.write(' go \n')
+output_file.write(' quit \n')
+output_file.write(' stop \n')
+'''
 # close output file    
 try:
     output_file.close()
