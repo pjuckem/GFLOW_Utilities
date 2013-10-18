@@ -228,13 +228,19 @@ if mult == True:
 
     elif (units == 'ft' or units == 'feet'):
         dist = dist * 0.3048 # convert to metric so all coordinates are metric.
-    dist = np.floor(dist * stp_mult) # need to round down so that number of digits is reduced
+        
+# changed np.floor to round(dist * stp_mult, 4) so that the cell size is not limited to integers...
+    #dist = np.floor(dist * stp_mult) # need to round down so that number of digits is reduced
                         # Otherwise the PTH analyzer throws an error due to uneven spaced grid.
+    dist = round(dist * stp_mult, 4) # need to round down so that number of digits is reduced
+                        # Otherwise the PTH analyzer throws an error due to uneven spaced grid.
+
 
 else:
     dist = float(allin['step_size']) # read distance directly if "step_size" is specified
     if (units == 'ft' or units == 'feet'):
         dist = dist * 0.3048 # convert to metric so all coordinates are metric.
+    dist = round(dist, 4)
 
 # open output file 
 try:
