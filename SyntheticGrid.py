@@ -119,7 +119,7 @@ def point_in_poly(test_pt,poly):
     return inside
 
 # ######################### #
-# Write particles functions #        
+# Generate the grid         #        
 # ######################### #
 
 def write_grid(test_pt,Z,yes_no):

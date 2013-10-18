@@ -274,7 +274,7 @@ if mult == True:
     if dist == -999.9:
         raise(StepFail(datfilename))
 
-    elif (units == 'ft' or units == 'feet'):
+    elif (distunits == 'ft' or distunits == 'feet'):
         dist = dist * 0.3048 # convert to metric so all coordinates are metric.
         
 # changed np.floor to round(dist * stp_mult, 4) so that the cell size is not limited to integers...
