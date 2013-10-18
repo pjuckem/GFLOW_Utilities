@@ -3,7 +3,7 @@ datfilename = Menom8_Calib.dat		# Name of GFLOW dat file
 Shapefile_name = M:\GroundWater_Systems\Menominee\ARC\Zoar_PTLgrid.shp 		# name of the shapefile for the desired particle grid. NOTE: Datum should be NAD27 and UTM coordinates.
 outfilename = Zoar_PTLs.dat  		# output analysis grid filename.  Note: output is a grid of X,Y in meters.
 Distance_units = ft			# enter "ft" or "m" for particle spacing below
-Particle_spacing = 1320			# Distance between points, in computational units (m or ft)
+Particle_spacing_mult = 1		# Distance between points, in computational units (m or ft)
 Direction = forward			# Specify "forward" or "backward" for the desired particle direction
 Elevation_units = ft			# "ft" or "m"
 Elevation = 3500			# Starting elevation. For forward from watertable, use a # > highest sim head.
@@ -15,7 +15,8 @@ Elevation = 3500			# Starting elevation. For forward from watertable, use a # > 
 # Shapefile_name			name of the polygon shapefile (UTM NAD27) overwhich particles will be generated
 # outfilename				name of the outputfile.  Shapefiles, if written, will use the same name.
 # Distance_units			ft, feet, m, meter, meters
-# Particle_spacing			any non-negative number
+# Particle_spacing			any non-negative number for distance between points, in specified distance units [omit if "Particle_spacing_mult" is specified]. NOTE: the program rounds to 4 decimal places.
+# Particle_spacing_mult			any non-negative number [omit if "Particle_spacing" is specified]. NOTE: the program rounds to 4 decimal places.
 # Direction				forward, backward
 # Elevation_units			ft, feet, m, meter, meters
 # Elevation				any non-negative number. For forward from watertable, use a # > highest sim head.

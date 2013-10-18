@@ -147,6 +147,25 @@ def get_model_origin(datfilename): # reads *.dat file and returns X and Y of mod
             break
     return (X_ORIG,Y_ORIG)	
 
+# ############################## #
+# Get step from GFLOW #        
+# ############################## #	
+def get_step(datfilename): # reads *.dat file and returns X and Y of model orgin	
+    DATA = []
+    ptl_step = -999.9  # in case there is a problem, a large number precludes long processing time
+    try:
+        dat_file = open(datfilename,'r').readlines()
+    except:
+        raise(FileFail(datfilename,'dat file'))
+
+    for each_line in dat_file:
+        DATA = each_line.split()  # splits a string at whitespaces    
+        DATA = DATA[:] + [1]
+        if DATA[0] == 'step':
+            ptl_step = float(DATA[1])
+            break
+    return (ptl_step)	
+
 # ############################################################## #			
 # Start of code; read in the namfile from the command prompt.    #
 # The namfile points to the files with input data.               #
@@ -156,7 +175,8 @@ coord = []
 # set up keywords, read Name file, generate dictionary of variable names and values from Name file.
 keywords = ['write_shapefiles','datfilename', 'shapefile_name',
             'outfilename', 'distance_units', 'particle_spacing',
-            'direction', 'elevation_units', 'elevation']
+            'particle_spacing_mult', 'direction', 'elevation_units', 
+            'elevation']
 shapekeys = ['yes','no']
 unitkeys = ['ft','feet','m','meter','meters']
 directionkeys = ['forward', 'backward']
@@ -177,11 +197,14 @@ for eachline in lines:
 allin = dict(zip(varnames,vals)) # construct dictionary of keywords and variables from NAM file.
 
 # test that all key words in NAM file match the predetermined list of key words
+mult = False
 match = False
 for key in allin.keys(): 
     for keyword in keywords:
         if key == keyword:
             match = True
+            if key == 'particle_spacing_mult':
+                mult = True            
             break
         else: match = False
     if match == False:
@@ -244,11 +267,28 @@ if direction.lower() == 'forward':
 elif direction.lower() == 'backward':
     trace = -1.0
 
-# compute the appropriate distance between each particle.
-dist = float(allin['particle_spacing']) # read distance between particles
-if (distunits == 'ft' or distunits == 'feet'):
-    dist = dist * 0.3048 # convert to metric so all coordinates are metric.
+# compute the appropriate distance between each grid node.
+if mult == True:
+    dist_mult = float(allin['particle_spacing_mult'])
+    dist = get_step(datfilename) # pull the step size from the DAT file
+    if dist == -999.9:
+        raise(StepFail(datfilename))
 
+    elif (units == 'ft' or units == 'feet'):
+        dist = dist * 0.3048 # convert to metric so all coordinates are metric.
+        
+# changed np.floor to round(dist * stp_mult, 4) so that the cell size is not limited to integers...
+    #dist = np.floor(dist * stp_mult) # need to round down so that number of digits is reduced
+                        # Otherwise the PTH analyzer throws an error due to uneven spaced grid.
+    dist = round(dist * dist_mult, 4) # need to round down so that number of digits is reduced
+                        # Otherwise the PTH analyzer throws an error due to uneven spaced grid.
+else:
+    dist = float(allin['particle_spacing'])  #read distance directly if "particle_spacing" is specified
+    if (distunits == 'ft' or distunits == 'feet'):
+        dist = dist * 0.3048 # convert to metric so all coordinates are metric.
+    dist = round(dist, 4)
+    
+    
 # get starting elevation of particles
 SE = float(allin['elevation'])
 # Note: Will not do anything with the specified elevation units, because expect
