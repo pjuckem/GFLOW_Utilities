@@ -229,18 +229,18 @@ if mult == True:
     elif (units == 'ft' or units == 'feet'):
         dist = dist * 0.3048 # convert to metric so all coordinates are metric.
         
-# changed np.floor to round(dist * stp_mult, 4) so that the cell size is not limited to integers...
-    #dist = np.floor(dist * stp_mult) # need to round down so that number of digits is reduced
+# multiplied float by 1000x before converting to INT.  Must divide by 1000x before applying "DIST"
+    dist = np.floor(dist * stp_mult * 1000) # need to round down so that number of digits is reduced
                         # Otherwise the PTH analyzer throws an error due to uneven spaced grid.
-    dist = round(dist * stp_mult, 4) # need to round down so that number of digits is reduced
-                        # Otherwise the PTH analyzer throws an error due to uneven spaced grid.
+                        # Multiply by 1000 to retain digets, but must divide by 1000 prior to use below.
+    #dist = round(dist * stp_mult, 4) 
 
 
 else:
     dist = float(allin['step_size']) # read distance directly if "step_size" is specified
     if (units == 'ft' or units == 'feet'):
         dist = dist * 0.3048 # convert to metric so all coordinates are metric.
-    dist = round(dist, 4)
+    dist = np.floor(dist * 1000)
 
 # open output file 
 try:
@@ -290,12 +290,12 @@ for eachpoly,polygon in enumerate(sfshape):  # allows for multiple polygons with
         PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
         Pg = [] 
         while (Xpoly <= Xmax):
-            Xpoly = Xpoly + dist
+            Xpoly = Xpoly + (dist / 1000)
             Pg.append(Xpoly)
             Pg.append(Ypoly)
             PCOORDgrd.append(np.array([Pg[0],Pg[1]])) # adds X & Y to lists, then to array PCOORDstr
             Pg = []  
-        Ypoly = Ypoly + dist	
+        Ypoly = Ypoly + (dist / 1000)	
 
     # check generated grid of points against true extent of the polygons
     for test_pt in (PCOORDgrd[:]): 	
@@ -323,8 +323,8 @@ if yes_no == 'yes':
         print ('\n \n********************************************************** \n'
                     '* All files other than the *.prj file have been written. * \n'
                     '**********************************************************\n \n')
-        raise(FileFail(prjinfile,'shapefile projection (*.prj) file'))
-    
+        #raise(FileFail(prjinfile,'shapefile projection (*.prj) file'))
+        #Commented out the raise fail because the program shouldn't fail simply bc the PRJ file hasn't been established.
     
 #get the elapsed time in seconds
 t_end = time.time()-t_start
