@@ -17,7 +17,7 @@ import numpy as np
 import time
 import shutil
 try:
-    import shapefile
+    import shapefile  # conda install pyshp
     shapefiles_imported = True
 except: 
     shapefiles_imported = False
@@ -252,7 +252,9 @@ except:
 # Evaluate and write grid #
 # #########################
 Z = 0
-pshape = shapefile.Writer(shapefile.POINT)        #set up the point shapefile
+#pshape = shapefile.Writer(shapefile.POINT)        #set up the point shapefile
+shapeoutname = outfilename[:-4] + '.shp'  # updated lines Dec. 2018
+pshape = shapefile.Writer(shapeoutname, shapefile.POINT)        #set up the point shapefile
 pshape.field('ptl')
 #pshape.field('StartElev','N',7,2) # StartElev is a number with upto 7 spaces, 2 of which are decimals
 pt_outstring = '     X      ' + '       Y    ' + '    ID_Num  ' + '\n' 
@@ -310,7 +312,8 @@ except:	raise(FileFail(outfilename,'output file'))
 
 # save the shapefile
 if yes_no == 'yes':
-    pshape.save(outfilename)
+    #pshape.save(outfilename)
+    pshape.close()  # updated Dec 2018
     # copy the projection file from the input Shapefile to the output shapefile
     prefix,suffix = shapefilename.split('.')
     prjinfile = prefix + '.prj'
